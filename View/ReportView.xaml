@@ -1,0 +1,41 @@
+<!--Report View
+	- shows view of one report -->
+<UserControl x:Class="ReportApp.View.ReportView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
+             xmlns:myctrl="clr-namespace:fyiReporting.RdlViewer;assembly=RdlViewer"
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+             >
+    
+        <Grid Name="gridMain">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <StackPanel Grid.Row="0">
+            <xctk:BusyIndicator IsBusy="{Binding IsBusy}">
+                <DockPanel >
+                    <xctk:DateTimePicker DockPanel.Dock="Left" Format="Custom" FormatString="yyyy-MMM-dd" Name="DateBox" Value="{Binding SelectedDate, Mode=TwoWay}" IsEnabled="{Binding DateBoxEnabled}"/>
+                    <Button Margin="1,0,0,0" DockPanel.Dock="Left" Name="ButtonPrint" HorizontalAlignment="Left" Command="{Binding ButtonPrintCommand}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock>Print</TextBlock>
+                            <Image Margin="5,0,0,0" Source="c:\CTApp\Settings\Icons\PrintDialog.png"/>
+                        </StackPanel>
+                    </Button>
+                    <Button DockPanel.Dock="Left" Margin="1,0,0,0" HorizontalAlignment="Left" Width="120" Command="{Binding SaveCsvCommand}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock>Export Report Zip</TextBlock>
+                            <Image Margin="5,0,0,0" Source="c:\CTApp\Settings\Icons\save_16xLG.png"/>
+                        </StackPanel>
+                    </Button>
+                    <Button DockPanel.Dock="Right" Name="ButtonRefresh" HorizontalAlignment="Right" Width="80" Command="{Binding ButtonRefreshCommand}">Refresh</Button>
+                </DockPanel>
+            </xctk:BusyIndicator>
+            </StackPanel>
+            
+            <ContentControl Grid.Row="1" Content="{Binding ReportViewerForm, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"/>
+        </Grid>
+    
+</UserControl>

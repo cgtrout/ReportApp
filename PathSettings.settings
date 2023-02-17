@@ -1,0 +1,33 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ReportApp" GeneratedClassName="PathSettings">
+  <Profiles />
+  <Settings>
+    <Setting Name="DatabasePath" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">c:\CTApp\DB\Data.sqlite</Value>
+    </Setting>
+    <Setting Name="VehicleDatabasePath" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">c:\CTApp\DB\Vehicle.sqlite</Value>
+    </Setting>
+    <Setting Name="ReportSettingsPath" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">c:\CTApp\Settings\Report.xml</Value>
+    </Setting>
+    <Setting Name="PhoneDatabasePath" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">c:\CTApp\DB\Phone.sqlite</Value>
+    </Setting>
+    <Setting Name="HelpPath" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">c:\CTApp\Help\</Value>
+    </Setting>
+    <Setting Name="ShiftEntryPresetLocation" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">C:\CTApp\Shift Entry Presets\</Value>
+    </Setting>
+    <Setting Name="DefaultSaveLocation" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">f:\</Value>
+    </Setting>
+    <Setting Name="OtherDatabasePath" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">c:\CTApp\DB\Other.sqlite</Value>
+    </Setting>
+    <Setting Name="SettingsLocation" Type="System.String" Scope="User">
+      <Value Profile="(Default)">c:\CTApp\Settings\</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

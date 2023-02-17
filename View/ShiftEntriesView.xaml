@@ -1,0 +1,254 @@
+﻿<UserControl x:Class="ReportApp.View.ShiftEntriesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ReportApp.View"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="600"
+             Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+             PreviewMouseWheel="UserControl_PreviewMouseWheel">
+     <xctk:BusyIndicator IsBusy="{Binding IsBusy}">
+          <Grid>
+               <Grid.Resources>
+                    <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+                    <DataTemplate x:Key="ExpanderHeader">
+                         <Border Margin="2" BorderBrush="#3333ff" BorderThickness="0 0 0 0" Width="255">
+                              <Border.Background>
+                                   <LinearGradientBrush StartPoint="0.5 0" EndPoint="0.5 1">
+                                        <GradientStop Color="#FF7171DA" Offset="0" />
+                                        <GradientStop Color="#FF2A2AB6" Offset="1.0"/>
+                                   </LinearGradientBrush>
+                              </Border.Background>
+                              <TextBlock Margin="5"
+                                         Foreground="White"
+                                         Text="{Binding Name}"
+                                         FontSize="16"
+                                         FontWeight="Bold">
+                              </TextBlock>
+                         </Border>
+                    </DataTemplate>
+                    <Style x:Key="GroupHeaderStyle" TargetType="{x:Type GroupItem}">
+                         <Setter Property="Template">
+                              <Setter.Value>
+                                   <ControlTemplate TargetType="{x:Type GroupItem}">
+                                        <Expander x:Name="exp" IsExpanded="True"
+                                                  Background="White" Foreground="Black"
+                                             >
+                                             <Expander.Header>
+                                                  <TextBlock Text="{Binding Name}" FontSize="12" FontWeight="Bold"/>
+                                             </Expander.Header>
+                                             <ItemsPresenter/>
+                                        </Expander>
+                                   </ControlTemplate>
+                              </Setter.Value>
+                         </Setter>
+                    </Style>
+               </Grid.Resources>
+               <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+               </Grid.RowDefinitions>
+               <DockPanel Grid.Row="0">
+                    <DockPanel DockPanel.Dock="Top">
+                         <Button DockPanel.Dock="Right" Command="{Binding GenerateReportCommand}">
+                              <StackPanel Orientation="Horizontal">
+                                   <TextBlock IsEnabled="{Binding IsEnabled}">Open Report</TextBlock>
+                                   <Image Margin="3,0,0,0" Width="16" Height="16" Source="c:\CTApp\Settings\Icons\Report.png"/>
+                              </StackPanel>
+                         </Button>
+                         <WrapPanel>
+                              <xctk:DateTimePicker IsEnabled="{Binding IsEnabled}" Width="110" TimePickerVisibility="Hidden" DockPanel.Dock="Left" Format="Custom" FormatString="yyyy-MMM-dd" Name="DateBox" Value="{Binding SelectedDate, Mode=TwoWay}"/>
+                              <ComboBox Margin="1,0,0,0"
+                                        IsEnabled="{Binding IsEnabled}"
+                                        Width="Auto"
+                                        SelectedIndex="{Binding TimeFrameSelectionIndex}"
+                                        IsEditable="True"
+                                        ToolTip="Timeframe selection for filter">
+                                   <ComboBoxItem>Show Year</ComboBoxItem>
+                                   <ComboBoxItem>Show Month</ComboBoxItem>
+                                   <ComboBoxItem>Show Week</ComboBoxItem>
+                                   <ComboBoxItem>Show Day</ComboBoxItem>
+                                   <ComboBoxItem>Custom Range</ComboBoxItem>
+                              </ComboBox>
+                              <ComboBox Margin="1,0,0,0" 
+                                   IsEnabled="{Binding IsEnabled}"
+                                   DockPanel.Dock="Left" 
+                                   Width="Auto" 
+                                   SelectedIndex="{Binding SelectedSort}"
+                                   IsEditable="True">
+                                   <ComboBoxItem>Group By Company</ComboBoxItem>
+                                   <ComboBoxItem>Time Sort</ComboBoxItem>
+                              </ComboBox>
+                         </WrapPanel>
+                    </DockPanel>
+                    <Expander DockPanel.Dock="Bottom" IsExpanded="{Binding IsSearchExpanded}" Header="Settings">
+                         <StackPanel Margin="0" KeyUp="DockPanel_KeyUp">
+                              <GroupBox Header="Preset Options">
+                                   <StackPanel>
+                                        <WrapPanel Margin="4">
+                                             <Label>Preset Name</Label>
+                                             <TextBox Width="183" Text="{Binding ReportName}" ToolTip="Name of preset.  Also used to rename generated reports" />
+                                             <Button IsEnabled="{Binding IsEnabled}" Margin="5,3,5,3" Command="{Binding OpenPresetCommand}" ToolTip="Opens a preset file">Open Preset</Button>
+                                             <Button IsEnabled="{Binding IsEnabled}" Margin="0,3,5,3" Command="{Binding SavePresetCommand}" ToolTip="Saves a preset file">Save Preset</Button>
+                                        </WrapPanel>
+                                        <WrapPanel Margin="4">
+
+                                        </WrapPanel>
+                                   </StackPanel>
+                              </GroupBox>
+                              <GroupBox Header="Search Parameters (each row is a separate search query)">
+                                   <DataGrid AutoGenerateColumns="False" 
+                                   Margin="5" HorizontalAlignment="Left" 
+                                   ItemsSource="{Binding ShiftEntrySearchList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                   CanUserAddRows="True"
+                                   ToolTip="Type in here to search by company / person"
+                                   >
+                                        <DataGrid.Columns>
+                                             <DataGridComboBoxColumn Header="Company" 
+                                                           MinWidth="120"
+                                                           TextBinding="{Binding Company, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                                           IsReadOnly="False">
+                                                  <DataGridComboBoxColumn.ElementStyle>
+                                                       <Style TargetType="ComboBox">
+                                                            <Setter Property="ItemsSource" Value="{Binding CompanyList}"/>
+                                                       </Style>
+                                                  </DataGridComboBoxColumn.ElementStyle>
+                                                  <DataGridComboBoxColumn.EditingElementStyle>
+                                                       <Style TargetType="ComboBox">
+                                                            <Setter Property="IsEditable" Value="True"/>
+                                                            <Setter Property="ItemsSource" Value="{Binding CompanyList}"/>
+                                                       </Style>
+                                                  </DataGridComboBoxColumn.EditingElementStyle>
+                                             </DataGridComboBoxColumn>
+
+                                             <DataGridComboBoxColumn Header="LastName" 
+                                                           MinWidth="100"
+                                                           TextBinding="{Binding LastName, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                                           IsReadOnly="False">
+                                                  <DataGridComboBoxColumn.ElementStyle>
+                                                       <Style TargetType="ComboBox">
+                                                            <Setter Property="ItemsSource" Value="{Binding LastNameList}"/>
+                                                       </Style>
+                                                  </DataGridComboBoxColumn.ElementStyle>
+                                                  <DataGridComboBoxColumn.EditingElementStyle>
+                                                       <Style TargetType="ComboBox">
+                                                            <Setter Property="IsEditable" Value="True"/>
+                                                            <Setter Property="ItemsSource" Value="{Binding LastNameList}"/>
+                                                       </Style>
+                                                  </DataGridComboBoxColumn.EditingElementStyle>
+                                             </DataGridComboBoxColumn>
+
+                                             <DataGridComboBoxColumn Header="FirstName" 
+                                                           MinWidth="100"
+                                                           TextBinding="{Binding FirstName, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                                                           IsReadOnly="False">
+                                                  <DataGridComboBoxColumn.ElementStyle>
+                                                       <Style TargetType="ComboBox">
+                                                            <Setter Property="ItemsSource" Value="{Binding FirstNameList}"/>
+                                                       </Style>
+                                                  </DataGridComboBoxColumn.ElementStyle>
+                                                  <DataGridComboBoxColumn.EditingElementStyle>
+                                                       <Style TargetType="ComboBox">
+                                                            <Setter Property="IsEditable" Value="True"/>
+                                                            <Setter Property="ItemsSource" Value="{Binding FirstNameList}"/>
+                                                       </Style>
+                                                  </DataGridComboBoxColumn.EditingElementStyle>
+                                             </DataGridComboBoxColumn>
+                                             
+                                        </DataGrid.Columns>
+                                   </DataGrid>
+                              </GroupBox>
+                              <GroupBox Header="Advanced Date Settings" Visibility="{Binding ShowAdvancedDateSettings}">
+                                   <WrapPanel>
+                                        <Label>Start Date:</Label>
+                                        <xctk:DateTimePicker IsEnabled="{Binding IsEnabled}"  Width="110" TimePickerVisibility="Hidden" DockPanel.Dock="Left" Format="Custom" Name="FromDateBox" FormatString="yyyy-MMM-dd" Value="{Binding SelectedDate, Mode=TwoWay}"/>
+                                        <Label Margin="10,0,0,0">End Date:</Label>
+                                        <xctk:DateTimePicker IsEnabled="{Binding IsEnabled}" Width="110" TimePickerVisibility="Hidden" DockPanel.Dock="Left" Format="Custom" Name="ToDateBox" FormatString="yyyy-MMM-dd" Value="{Binding EndDate, Mode=TwoWay}"/>
+                                   </WrapPanel>
+                              </GroupBox>
+
+                              <StackPanel Margin="0, 0" HorizontalAlignment="Left">
+                                   <WrapPanel Orientation="Horizontal">
+                                        <Button IsEnabled="{Binding IsEnabled}" Width="48" Margin="0,4,0,0" ToolTip="Clears search fields" Command="{Binding ClearCommand}">Clear</Button>
+                                        <Button IsEnabled="{Binding IsEnabled}" Width="48" Margin="4,4,0,0" HorizontalAlignment="Right" Click="SubmitButton_Click" >Search</Button>
+                                   </WrapPanel>
+
+                              </StackPanel>
+
+                         </StackPanel>
+                    </Expander>
+               </DockPanel>
+               <FrameworkElement x:Name="dummyElement" Visibility="Collapsed"/>
+               <DataGrid AutoGenerateColumns="False" 
+                    Grid.Row="1"
+                    ItemsSource="{Binding View}"
+                    SelectedItem="{Binding SelectedValue}"
+                    VirtualizingPanel.IsVirtualizing="True"
+                    VirtualizingPanel.IsVirtualizingWhenGrouping="True"
+                    SelectionMode="Single"
+                    CanUserDeleteRows="False">
+                    <DataGrid.GroupStyle>
+                         <GroupStyle ContainerStyle="{StaticResource GroupHeaderStyle}">
+
+                         </GroupStyle>
+                    </DataGrid.GroupStyle>
+                    <i:Interaction.Triggers>
+                         <i:EventTrigger EventName="CellEditEnding">
+                              <i:InvokeCommandAction Command="{Binding RowEditCommand}"/>
+                         </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                    <DataGrid.ContextMenu>
+                         <ContextMenu>
+                              <MenuItem Header="Edit" Command="{Binding EditCommand}"/>
+                         </ContextMenu>
+                    </DataGrid.ContextMenu>
+                    <DataGrid.Columns>
+                         <DataGridTextColumn Header="Name" Binding="{Binding LinkedPerson.FullName, Mode=OneWay}"/>
+                         <DataGridTextColumn Visibility="{Binding Path=DataContext.ShowCompany, Source={x:Reference dummyElement}, Converter={StaticResource BoolToVis}}"  
+                                        Header="Company" Binding="{Binding LinkedPerson.Company, Mode=OneWay}"/>
+                         <DataGridTemplateColumn Header="In">
+                              <DataGridTemplateColumn.CellTemplate>
+                                   <DataTemplate>
+                                        <TextBlock Text="{Binding InTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}\{0:yyyy-MM-dd HH:mm\}}"/>
+                                   </DataTemplate>
+                              </DataGridTemplateColumn.CellTemplate>
+                              <DataGridTemplateColumn.CellEditingTemplate>
+                                   <DataTemplate>
+                                        <xctk:DateTimePicker Value="{Binding InTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                        Format="Custom"
+                                                        FormatString="yyyy-MMM-dd HH:mm"
+                                                        />
+                                   </DataTemplate>
+                              </DataGridTemplateColumn.CellEditingTemplate>
+                         </DataGridTemplateColumn>
+                         <DataGridTemplateColumn Header="Out">
+                              <DataGridTemplateColumn.CellTemplate>
+                                   <DataTemplate>
+                                        <TextBlock Text="{Binding OutTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, StringFormat={}\{0:yyyy-MM-dd HH:mm\}}"/>
+                                   </DataTemplate>
+                              </DataGridTemplateColumn.CellTemplate>
+                              <DataGridTemplateColumn.CellEditingTemplate>
+                                   <DataTemplate>
+                                        <xctk:DateTimePicker Value="{Binding OutTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                             Format="Custom"
+                                                             FormatString="yyyy-MMM-dd HH:mm"
+                                                             />
+                                   </DataTemplate>
+                              </DataGridTemplateColumn.CellEditingTemplate>
+                         </DataGridTemplateColumn>
+                         <DataGridTextColumn Header="Hours" Binding="{Binding HoursText, Mode=OneWay}"/>
+                    </DataGrid.Columns>
+                    <DataGrid.LayoutTransform>
+                         <ScaleTransform ScaleX="{Binding Path=Value, ElementName=SliderZoom}" ScaleY="{Binding Path=Value, ElementName=SliderZoom}"/>
+                    </DataGrid.LayoutTransform>
+               </DataGrid>
+               <DockPanel Visibility="Collapsed" Name="DockPanelSlider" LastChildFill="True" DockPanel.Dock="Bottom">
+                    <TextBlock DockPanel.Dock="Left" >Zoom</TextBlock>
+                    <Slider DockPanel.Dock="Right" Name="SliderZoom" Minimum="0.25" Maximum="2" SmallChange="0.25" LargeChange="0.5" Value="1.0"/>
+               </DockPanel>
+          </Grid>
+     </xctk:BusyIndicator>
+</UserControl>

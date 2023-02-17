@@ -1,0 +1,114 @@
+<UserControl x:Class="ReportApp.View.SearchPersonView"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    Loaded="UserControl_Loaded" Background="#FFEAEFE9" BorderBrush="#FF12CB00">
+    <UserControl.InputBindings>
+        <KeyBinding Key="Enter" Command="{Binding SearchCommand}"/>
+    </UserControl.InputBindings>
+    <Border BorderThickness="1.5" BorderBrush="#FF00B038" >
+        <Viewbox x:Name="ZoomViewbox" Stretch="Uniform" StretchDirection="Both" VerticalAlignment="Top">
+
+            <DockPanel>
+                <WrapPanel HorizontalAlignment="Center" DockPanel.Dock="Bottom">
+                    <Button Command="{Binding SearchCommand}" 
+                            Name="ButtonSearch"
+                            Width="100" Margin="5"  
+                            Background="Transparent"
+                            ToolTip="Click to execute search">Search</Button>
+                </WrapPanel>
+                <Grid DockPanel.Dock="Left">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                        <RowDefinition Height="*"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <GroupBox Grid.Row="0"
+					Header="Search Person Info"
+					Width="250">
+                        <StackPanel
+						Margin="5">
+                            <Label>Company to search</Label>
+                            <ComboBox 
+                                   Name="ComboBoxCompany"
+                                   LostFocus="CompanyBox_LostFocus"
+							Text="{Binding CurrentPerson.Company, UpdateSourceTrigger=PropertyChanged}"
+							ItemsSource="{Binding CompanyList}"
+							IsEditable="True">
+                            </ComboBox>
+                            <Label>Last Name</Label>
+                            <ComboBox
+                                   LostFocus="TextBoxLastName_LostFocus"
+							Name="TextBoxLastName"
+                                   IsEditable="True"
+                                   ItemsSource="{Binding LastNameList}"
+                                   Text="{Binding Path=CurrentPerson.LastName, UpdateSourceTrigger=PropertyChanged}">
+                            </ComboBox>
+                            <Label>First Name</Label>
+                            <ComboBox
+							Text="{Binding CurrentPerson.FirstName, UpdateSourceTrigger=PropertyChanged}"
+                                   IsEditable="True"
+                                   ItemsSource="{Binding FirstNameList}">
+                            </ComboBox>
+                        </StackPanel>
+                    </GroupBox>
+                    <GroupBox Grid.Row="1"
+					Header="Search Credentials"
+					Width="250"
+					>
+                        <StackPanel Margin="5">
+                            <Label>Credential Number</Label>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBox 
+							Text="{Binding CurrentPerson.FobNumber, ValidatesOnDataErrors=True, NotifyOnValidationError=True, UpdateSourceTrigger=PropertyChanged}"
+							Name="TextBoxKeyFob"
+                                        GotFocus="TextBoxLastName_GotFocus"
+                                        Width="187"></TextBox>
+                                <Button Name="ReadButton"
+                                                Background="{Binding ReadButtonBackground, Mode=OneWay}"
+                                                Command="{Binding ReadButtonCommand}"
+                                                IsTabStop="False"
+                                                ToolTip="When this is red it means the form is in scan mode.  Move a fob or card across scanner to scan in the data.">Scan</Button>
+                            </StackPanel>
+                            <Label>Credential Type</Label>
+                            <TextBox Text="{Binding CurrentPerson.FobCredential}"></TextBox>
+                            <Label>PIN</Label>
+                            <TextBox 
+							Name="TextBoxPinNumber"
+							Text="{Binding CurrentPerson.PinNumber, ValidatesOnDataErrors=True, NotifyOnValidationError=True, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                        </StackPanel>
+                    </GroupBox>
+                </Grid>
+                <StackPanel DockPanel.Dock="Right">
+                    <GroupBox
+				     Header="Search Orientation"
+				     
+				     Width="300">
+                        <StackPanel
+					     Margin="5">
+                            <Label>Number</Label>
+                            <TextBox 
+						     Name="TextBoxOrientationNumber"
+						     Text="{Binding CurrentPerson.OrientationNumber, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                            <Label>Level</Label>
+                            <TextBox
+						     Text="{Binding CurrentPerson.OrientationLevel, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                            <Label>Tested By</Label>
+                            <TextBox
+						     Text="{Binding CurrentPerson.OrientationTestedBy, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                        </StackPanel>
+                    </GroupBox>
+                    <GroupBox Header="Search Settings" Height="187">
+                        <StackPanel Margin="5">
+                            <CheckBox 
+								IsChecked="{Binding Path=ShowDeleted, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+								Margin="0, 8, 0, 0">Show Deleted</CheckBox>
+                            <CheckBox VerticalAlignment="Center" ToolTip="Unchecking this will allow you to delete the person, view their shift entries, and view their phone info." 
+                                        IsChecked="{Binding ShouldAutoOpen}">Edit person if only one result is found</CheckBox>
+                            <CheckBox IsChecked="{Binding ShouldAutoClose}">Close this dialog after searching</CheckBox>
+                        </StackPanel>
+                    </GroupBox>
+                </StackPanel>
+            </DockPanel>
+        </Viewbox>
+    </Border>
+</UserControl>

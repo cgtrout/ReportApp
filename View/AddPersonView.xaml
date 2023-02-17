@@ -1,0 +1,401 @@
+<?xml version="1.0" encoding="utf-8"?>
+<UserControl
+x:Class="ReportApp.View.AddPersonView" 
+xmlns:System="clr-namespace:System;assembly=mscorlib"
+xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+xmlns:sys="clr-namespace:System;assembly=mscorlib"
+xmlns:util="clr-namespace:ReportApp.Utility"
+xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+Loaded="UserControl_Loaded" Background="#FFEEEEF5" BorderBrush="#FF0023FF"   
+        >
+    <UserControl.Resources>
+        <util:BooleanToVisibilityConverter x:Key="BoolToVis"/>
+        <Brush x:Key="ButtonBorderColor">#FF9999BB</Brush>
+        <Brush x:Key="ButtonText">#FF111199</Brush>
+        <Brush x:Key="Old">Transparent</Brush>
+        <LinearGradientBrush x:Key="ButtonBackgroundColor" EndPoint="0,1" StartPoint="0,0">
+            <GradientStop Color="#FFEEEEF0" Offset="0"/>
+            <GradientStop Color="#FFDDDDDD" Offset="1"/>
+        </LinearGradientBrush>
+
+    </UserControl.Resources>
+    <UserControl.InputBindings>
+        <KeyBinding Key="Enter" Command="{Binding SaveCommand}"/>
+    </UserControl.InputBindings>
+    <UserControl.ContextMenu>
+        <ContextMenu Visibility="{Binding Path=EditMode, Mode=OneWay, Converter={StaticResource BoolToVis}}">
+            <MenuItem Header="View Shift-Entries" Command="{Binding ShiftEntryCommand}"/>
+            <WrapPanel Margin="0" Orientation="Horizontal">
+                <TextBlock HorizontalAlignment="Left" Margin="0" FontWeight="Bold">Phone:</TextBlock>
+                <TextBlock Margin="2, 0, 0, 0" VerticalAlignment="Center" Text="{Binding CurrentPerson.PhoneInfo}" />
+            </WrapPanel>
+            <Separator/>
+            <MenuItem Header="Add to away list" Command="{Binding AddAwayListCommand}"/>
+            <!--<MenuItem Header="Load in Netbox software." 
+                        Visibility="{Binding Path=EditMode, Mode=OneWay, Converter={StaticResource BoolToVis}}"
+                        Command="{Binding NetboxLoadCommand}"/>-->
+        </ContextMenu>
+    </UserControl.ContextMenu>
+    <xctk:BusyIndicator IsBusy="{Binding IsBusy}">
+        <Border BorderThickness="1.5" BorderBrush="#FF212FC1">
+            <Viewbox x:Name="ZoomViewbox" Stretch="Uniform" StretchDirection="Both" VerticalAlignment="Top">
+
+                <DockPanel>
+                    <WrapPanel Margin="0" DockPanel.Dock="Bottom" HorizontalAlignment="Center" Orientation="Vertical">
+                        <Button 
+                        Name="ButtonSubmit"
+                        IsEnabled="{Binding ControlsEnabled}"  
+                        BorderBrush="{StaticResource ButtonBorderColor}"
+                        Background="{StaticResource ButtonBackgroundColor}"                            
+                        Command="{Binding SaveCommand}" Width="150" Margin="0" ToolTip="Submits data to Netbox system" >Submit</Button>
+                        <Label FontSize="9" Height="22" VerticalAlignment="Top" Margin="0,-6,0,0">Note: No data on this form will be saved before submit button is pressed</Label>
+                    </WrapPanel>
+
+                    <Expander DockPanel.Dock="Bottom" Header="Vehicle" Width="550" IsExpanded="{Binding VehiclesExpanded}">
+                        <StackPanel>
+                            <WrapPanel>
+                                <Label>Enable vehicles:</Label>
+                                <CheckBox IsChecked="{Binding CurrentPerson.VehiclesActivated}"  
+                                            VerticalAlignment="Center"
+                                            ToolTip="When enabled this person will be assigned a vehicle entry when using the assigned Fob reader."
+                                            ></CheckBox>
+                                <TextBlock Width="20" />
+                                <Label>Vehicle Reader:</Label>
+                                <ComboBox  Width="120" 
+                                            Name="ComboBoxReader"
+                                            HorizontalAlignment="Left" 
+                                            SelectedIndex="{Binding CurrentPerson.VehicleReader}" 
+                                            Style="{StaticResource {x:Static ToolBar.ComboBoxStyleKey}}"
+                                            DockPanel.Dock="Left"
+                                            ToolTip="Fob reader that will be used for this person's vehicles."
+                                            >
+                                    <ComboBoxItem>Admin Reader</ComboBoxItem>
+                                    <ComboBoxItem>CB Reader</ComboBoxItem>
+                                </ComboBox>
+                            </WrapPanel>
+                            <DataGrid IsEnabled="{Binding ControlsEnabled}" AutoGenerateColumns="False" Margin="10" ItemsSource="{Binding CurrentPerson.VehicleList}">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn MinWidth="90" Header="LicNum" Binding="{Binding LicNum, Mode=TwoWay}"/>
+                                    <DataGridTextColumn MinWidth="90" Header="Color" Binding="{Binding Color, Mode=TwoWay}"/>
+                                    <DataGridTextColumn MinWidth="90" Header="Make" Binding="{Binding Make, Mode=TwoWay}"/>
+                                    <DataGridTextColumn MinWidth="90" Header="Model" Binding="{Binding Model, Mode=TwoWay}"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </StackPanel>
+                    </Expander>
+                    <Grid DockPanel.Dock="Left">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                            <RowDefinition Height="Auto"></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <GroupBox Grid.Row="0"
+                            Header="Person Info"
+                              
+                            Width="250">
+                            <StackPanel
+                    Margin="5">
+                                <WrapPanel>
+                                    <Label Width="149">Company</Label>
+
+                                    <Button Command="{Binding CopyCommand}" 
+                                        IsTabStop="False"
+                                        Width="35"
+                                        Foreground="{StaticResource ButtonText}"
+                                        BorderBrush="{StaticResource ButtonBorderColor}"
+                                        Background="{StaticResource ButtonBackgroundColor}"
+                                        ToolTip="Click to copy company and name to clipboard. You can then paste it into the Excel workbook."
+                                        Margin="2,2,0,2"
+                                            >Copy</Button>
+                                    <Button Margin="2,2,0,2" Width="40"
+                                            Command="{Binding RecallLastCompanyCommand}"
+                                            Foreground="{StaticResource ButtonText}"
+                                            BorderBrush="{StaticResource ButtonBorderColor}"
+                                            Background="{StaticResource ButtonBackgroundColor}"
+                                            ToolTip="Copy company from previously saved person">
+                                        Recall
+                                    </Button>
+                                </WrapPanel>
+                                <ComboBox 
+                                    Name="ComboBoxCompany"
+                                    Text="{Binding CurrentPerson.Company, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnValidationError=True}"
+                                    ItemsSource="{Binding CompanyList}"
+                                    IsEditable="True"
+                                    IsEnabled="{Binding ControlsEnabled}">
+                                </ComboBox>
+
+                                <Label>Last Name</Label>
+                                <TextBox
+                        Name="TextBoxLastName"
+                        Text="{Binding Path=CurrentPerson.LastName, ValidatesOnDataErrors=True, NotifyOnValidationError=True, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        CharacterCasing="Upper"
+                                IsEnabled="{Binding ControlsEnabled}">
+                                </TextBox>
+                                <Label>First Name</Label>
+                                <TextBox
+                        Name="TextBoxFirst"
+                        Text="{Binding CurrentPerson.FirstName, Mode=TwoWay, ValidatesOnDataErrors=True, NotifyOnValidationError=True, UpdateSourceTrigger=PropertyChanged}"
+                        LostFocus="TextBoxFirst_LostFocus"
+                                IsEnabled="{Binding ControlsEnabled}"></TextBox>
+
+                                <Popup IsOpen="{Binding CurrentPerson.CompanyPopupIsOpen}" MouseLeftButtonUp="CompanyPopup_MouseLeftButtonUp">
+                                    <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="50">
+                                        <TextBlock Width="200" Background="Yellow" Text="{Binding CurrentPerson.CompanyPopupText}"/>
+                                    </ScrollViewer>
+                                </Popup>
+                            </StackPanel>
+                        </GroupBox>
+                        <GroupBox Grid.Row="1"
+                Header="{Binding CurrentPerson.CredentialGroupName}"
+                                  Foreground="{Binding CurrentPerson.CredentialColor}" 
+                                  BorderBrush="{Binding CurrentPerson.CredentialBorderColor}"
+                                  BorderThickness="{Binding CurrentPerson.CredentialBorderThickness}"
+                Width="250"
+                        Height="174"
+                >
+                            <StackPanel Margin="5">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="11*"/>
+                                        <ColumnDefinition Width="65*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Label HorizontalAlignment="Left" Width="100" Grid.ColumnSpan="2">Main Credential</Label>
+                                    <CheckBox IsTabStop="False" HorizontalAlignment="Right" VerticalAlignment="Center" 
+                                              IsChecked="{Binding CurrentPerson.CredentialActive}" Grid.Column="1" 
+                                              Foreground="{Binding CurrentPerson.CredentialColor}"
+                                              Margin="0,5" ToolTip="Check to activate this person's credentials">Active</CheckBox>
+                                </Grid>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBox Width="65"
+                                             Name="TextBoxKeyFob"
+                                             ToolTip="Number associated with credential"
+                                             IsEnabled="{Binding ControlsEnabled}"
+                                             GotFocus="TextBox_GotFocus">
+                                        <TextBox.Text>
+                                            <Binding Path="CurrentPerson.FobNumberString"
+                                                     NotifyOnValidationError="True"
+                                                     Mode="TwoWay"
+                                                     UpdateSourceTrigger="PropertyChanged">
+                                                <Binding.ValidationRules>
+                                                </Binding.ValidationRules>
+                                            </Binding>
+                                        </TextBox.Text>
+                                    </TextBox>
+                                    <TextBox 
+                                                Text="{Binding CurrentPerson.FobCredential}"
+                                                Width="132"
+                                                ToolTip="The credential type"
+                                                IsTabStop="False">
+                                    </TextBox>
+                                    <Button Name="ReadButton"
+                                        Foreground="{StaticResource ButtonText}"
+                                        Background="{Binding ReadButtonBackground, Mode=OneWay}"
+                                        BorderBrush="{StaticResource ButtonBorderColor}"    
+                                        Command="{Binding ReadButtonCommand}"
+                                        IsTabStop="False"
+                                        ToolTip="When this is red it means the form is in scan mode.  Move a fob or card across scanner to scan in the data."
+                                        Width="31">Scan</Button>
+                                </StackPanel>
+                                <Popup IsOpen="{Binding CurrentPerson.FobPopupIsOpen}" 
+                                        PlacementTarget="{Binding ElementName=TextBoxKeyFob}"
+                                        Placement="Bottom"
+                                        MouseLeftButtonUp="FobPopup_MouseLeftButtonUp">
+                                    <TextBlock Background="{Binding CurrentPerson.FobPopupColor}" Text="{Binding CurrentPerson.FobPopupText}"/>
+                                </Popup>
+                                <Label>PIN</Label>
+                                <Popup IsOpen="{Binding CurrentPerson.PinPopupIsOpen}" 
+                                        PlacementTarget="{Binding ElementName=TextBoxPinNumber}"
+                                        Placement="Bottom"
+                                        MouseLeftButtonUp="PinPopup_MouseLeftButtonUp">
+                                    <TextBlock Background="{Binding CurrentPerson.PinPopupColor}" Text="{Binding CurrentPerson.PinPopupText}"/>
+                                </Popup>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBox 
+                                        Name="TextBoxPinNumber"
+                                        Width="197"
+                                        IsEnabled="{Binding ControlsEnabled}">
+                                        <TextBox.Text>
+                                            <Binding Path="CurrentPerson.PinNumberString"
+                                                     NotifyOnValidationError="True"
+                                                     Mode="TwoWay"
+                                                     UpdateSourceTrigger="PropertyChanged">
+                                            </Binding>
+                                        </TextBox.Text>
+                                    </TextBox>
+                                    <Button
+                                        Background="{StaticResource ButtonBackgroundColor}"
+                                        BorderBrush="{StaticResource ButtonBorderColor}"
+                                        Foreground="{StaticResource ButtonText}"
+                                        Command="{Binding RandomPinCommand}"
+                                        IsTabStop="False"
+                                        ToolTip="Generate new unused PIN"
+                                        Width="31">
+                                        New
+                                    </Button>
+                                </StackPanel>
+
+
+                                <TextBlock Foreground="Black" Name="ZeroWarningText" FontSize="10" TextWrapping="Wrap" TextAlignment="Center" Margin="0" FontStyle="Italic">Set to 0 if you don't want to add a credential or change to 0 to remove an existing credential.</TextBlock>
+                            </StackPanel>
+                        </GroupBox>
+                    </Grid>
+                    <StackPanel>
+                        <GroupBox 
+                        DockPanel.Dock="Right"
+                        Header="Orientation"
+                        Width="300"
+                            Margin="0">
+                            <StackPanel
+                            Margin="5">
+                                <WrapPanel>
+                                    <Label Width="206">Number</Label>
+
+                                </WrapPanel>
+
+                                <DockPanel LastChildFill="True">
+                                    <Button 
+                                    DockPanel.Dock="Right" 
+                                    Background="{StaticResource ButtonBackgroundColor}"
+                                    BorderBrush="{StaticResource ButtonBorderColor}"
+                                    Foreground="{StaticResource ButtonText}"
+                                    Width="50" 
+                                    KeyboardNavigation.IsTabStop="False" 
+                                    ToolTip="Updates to newest orientation number" 
+                                    Command="{Binding GetOrientationCommand}">Update</Button>
+                                    <Popup IsOpen="{Binding CurrentPerson.OrientationPopupIsOpen}" MouseLeftButtonUp="OrientationPopup_MouseLeftButtonUp">
+                                        <TextBlock Background="Red" Text="{Binding CurrentPerson.OrientationPopupText}"/>
+                                    </Popup>
+                                    <!--<TextBox 
+                                    Name="TextBoxOrientationNumber"
+                                    LostFocus="OrientationNumber_LostFocus"
+                                    Text="{Binding CurrentPerson.OrientationNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"></TextBox>-->
+                                    <xctk:IntegerUpDown 
+                                    Name="TextBoxOrientationNumber"
+                                    IsEnabled="{Binding ControlsEnabled}"
+                                    LostFocus="OrientationNumber_LostFocus"
+                                    Value="{Binding CurrentPerson.OrientationNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                </DockPanel>
+                                <WrapPanel>
+                                    <Label Width="226">Date Tested</Label>
+                                    <Button Width="50" 
+                                        IsTabStop="False"
+                                        Command="{Binding RecallLastCommand}"
+                                        Foreground="{StaticResource ButtonText}"
+                                        BorderBrush="{StaticResource ButtonBorderColor}"
+                                        Background="{StaticResource ButtonBackgroundColor}"
+                                        ToolTip="Copy values from last saved person"
+                                        Margin="2,2,0,2">
+                                        Recall
+                                    </Button>
+                                </WrapPanel>
+
+                                <DockPanel LastChildFill="True">
+                                    <Button 
+                                    DockPanel.Dock="Right" 
+                                    BorderBrush="{StaticResource ButtonBorderColor}"
+                                    Background="{StaticResource ButtonBackgroundColor}"
+                                    Foreground="{StaticResource ButtonText}"
+                                    Width="50" 
+                                    ToolTip="Selects Current Date" 
+                                    KeyboardNavigation.IsTabStop="False" 
+                                    Command="{Binding CurrentDateClickedCommand}">Current Date</Button>
+
+                                    <xctk:DateTimePicker Name="DatePickerOrientationDate" 
+                                                    TimePickerVisibility="Hidden" 
+                                                    DockPanel.Dock="Left" 
+                                                    Format="Custom" 
+                                                    FormatString="yyyy-MMM-dd" 
+                                                    Value="{Binding CurrentPerson.OrientationDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                    IsEnabled="{Binding ControlsEnabled}"/>
+
+                                </DockPanel>
+                                <Label>Level</Label>
+                                <TextBox
+                                Text="{Binding CurrentPerson.OrientationLevel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnValidationError=True}"
+                                Name="LevelTextBox"
+                                    LostFocus="LevelTextBox_LostFocus"
+                                    IsEnabled="{Binding ControlsEnabled}"
+                                    />
+                                <Label>Tested By (Four Letter Initials)</Label>
+                                <ComboBox 
+                                    Name="ComboBoxTestedBy"
+                                    Text="{Binding CurrentPerson.OrientationTestedBy, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, NotifyOnValidationError=True}"
+                                    ItemsSource="{Binding TestedByList}"
+                                    IsEditable="True"
+                                    LostFocus="ComboBoxTestedBy_LostFocus"
+                                            IsEnabled="{Binding ControlsEnabled}">
+                                </ComboBox>
+                                <Label>Expiration Date</Label>
+                                <DockPanel LastChildFill="True">
+                                    <Button 
+                                    DockPanel.Dock="Right" 
+                                    Background="{StaticResource ButtonBackgroundColor}"
+                                    BorderBrush="{StaticResource ButtonBorderColor}"
+                                    Foreground="{StaticResource ButtonText}"
+                                    Width="50" 
+                                    KeyboardNavigation.IsTabStop="False" 
+                                    ToolTip="Clears the expiration date (so credential will not expire)." Command="{Binding ExpirationClearCommand}">Clear</Button>
+                                    <!--<TextBox
+                                    Name="ExpirationDateBox"
+                                    Text="{Binding CurrentPerson.ExpirationDateString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    IsEnabled="False">
+                                </TextBox>-->
+                                    <Border Background="White" BorderBrush="DarkGray" BorderThickness="1" Margin="0" DockPanel.Dock="Left">
+                                        <Border Margin="0" 
+                                                    Height="22"
+                                            Width="20"
+                                                
+                                            BorderThickness="0" 
+                                            BorderBrush="{Binding CurrentPerson.OrientationColorBorder}"
+                                            ToolTip="Days until expiration">
+                                            <Label Background="{Binding CurrentPerson.OrientationColorBackground}" 
+                                                        Width="20"
+                                                        Height="22"
+                                                        Margin="0"  
+                                                        VerticalContentAlignment="Center"
+                                                        HorizontalContentAlignment="Center"
+                                                        Content="{Binding CurrentPerson.OrientationDays}"
+                                                            TextBlock.Foreground="{Binding CurrentPerson.OrientationColorText}"
+                                                            FontSize="9"
+                                                            TextBlock.TextAlignment="Center">
+
+                                            </Label>
+                                        </Border>
+                                    </Border>
+                                    <xctk:DateTimePicker Name="ExpirationDateBox" 
+                                                    TimePickerVisibility="Hidden" 
+                                                    DockPanel.Dock="Left" 
+                                                    Format="Custom" 
+                                                    FormatString="yyyy-MMM-dd" 
+                                                    Value="{Binding CurrentPerson.ExpirationDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                    IsEnabled="{Binding ControlsEnabled}"/>
+                                </DockPanel>
+                                <TextBlock TextWrapping="Wrap" Margin="1" FontSize="10" TextAlignment="Left" FontStyle="Italic">Set orientation number to 0 if you don't want to add orientation data on submit.</TextBlock>
+                            </StackPanel>
+                        </GroupBox >
+                        <GroupBox Header="Other" Height="48" 
+                            Margin="0">
+                            <WrapPanel Margin="0,0,0,0"  Orientation="Horizontal">
+                                <Label Margin="0,0,5,0">Contact:</Label>
+
+                                <ComboBox 
+                            Name="ComboBoxOldCompContact"
+                                Margin="0,0,0,0"
+                                Text="{Binding CurrentPerson.OldCompContact, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                Width="80"
+                            ItemsSource="{Binding OldCompContactList}"
+                            IsEditable="True"
+                                IsEnabled="{Binding ControlsEnabled}"
+                                LostFocus="ComboBoxOldCompContact_LostFocus">
+                                </ComboBox>
+                                <Label>Emp Cat:</Label>
+                                <TextBox Name="TextBoxCat" IsEnabled="True" Text="{Binding CurrentPerson.EmployeeCategory}" Width="40" ToolTip="Employee category - will be shown next to name on printed Roll Call."/>
+                            </WrapPanel>
+                        </GroupBox>
+                    </StackPanel>
+
+                </DockPanel>
+            </Viewbox>
+        </Border>
+    </xctk:BusyIndicator>
+</UserControl>

@@ -1,0 +1,40 @@
+﻿<UserControl x:Class="ReportApp.View.ReportStatsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ReportApp.View"
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             mc:Ignorable="d" 
+             Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+             d:DesignHeight="300" d:DesignWidth="600">
+    <Grid>
+          <Grid.RowDefinitions>
+               <RowDefinition Height="Auto"/>
+               <RowDefinition/>
+               <RowDefinition Height="Auto"/>
+          </Grid.RowDefinitions>
+          
+          <ScrollViewer Grid.Row="1">
+               <StackPanel HorizontalAlignment="Center"  Name="printGrid" Width="274">
+                    <WrapPanel Orientation="Horizontal">
+                         <TextBlock Text="{Binding SelectedDateText, Mode=OneWay}" FontSize="25"/>
+                    </WrapPanel>
+                    <TextBlock TextWrapping="Wrap" HorizontalAlignment="Right" Height="89" Width="268">
+                        <Bold>Before exporting:</Bold>  Ensure everyone working the last nightshift of the month has signed out.<LineBreak/><LineBreak/>
+                        This will ensure their out times are completed in the reports.</TextBlock>
+                <WrapPanel>
+                    <Label>
+                        <Bold>Select month to export:</Bold></Label>
+                    <xctk:DateTimePicker Grid.Row="0" HorizontalAlignment="Center" Width="120" TimePickerVisibility="Hidden" DockPanel.Dock="Left" Format="Custom" FormatString="yyyy-MMM-dd" Name="DateBox" Value="{Binding SelectedDate, Mode=TwoWay}"/>                    
+                </WrapPanel>
+                    <Label Width="100" />
+                    <Button Width="90" Command="{Binding SaveZipCommand}"  Grid.Row="2">Save Zip File</Button>
+               </StackPanel>
+          </ScrollViewer>
+
+          
+     </Grid>
+</UserControl>
+
+     

@@ -1,0 +1,27 @@
+<UserControl x:Class="ReportApp.View.ConsoleView"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+     Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+	FocusManager.FocusedElement="{Binding ElementName=InputBox}">
+	<UserControl.InputBindings>
+		<KeyBinding Key="Enter" Command="{Binding ExecuteCommand}"/>
+		
+          
+	</UserControl.InputBindings>
+	<DockPanel LastChildFill="True">
+		<!--Input-->
+		<TextBox Name="InputBox" DockPanel.Dock="Bottom" Text="{Binding CurrentLine, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+               <TextBox.InputBindings>
+                    <KeyBinding Key="Tab" Command="{Binding PartialMatchCommand}"/>
+                    <KeyBinding Key="Up"  Command="{Binding PrevCommand}"/>
+                    <KeyBinding Key="Down" Command="{Binding NextCommand}"/>
+               </TextBox.InputBindings>
+		</TextBox>
+		<!--History Box-->
+		<ScrollViewer Name="ScrollViewerHistory">
+			<TextBox TextChanged="History_TextChanged" IsReadOnly="True" Text="{Binding consoleSystem.History, Mode=OneWay}"
+					 Background="Black" Foreground="AliceBlue" FontFamily="Courier New">
+			</TextBox>
+		</ScrollViewer>
+	</DockPanel>
+</UserControl>

@@ -1,0 +1,126 @@
+﻿<!--
+This resource dictionary is used by the MainWindow. 
+-->
+<ResourceDictionary
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:vm="clr-namespace:ReportApp.ViewModel"
+	xmlns:vw="clr-namespace:ReportApp.View"
+	xmlns:u="clr-namespace:ReportApp.Utility"
+>
+     <u:BooleanToVisibilityConverter x:Key="BoolToVis"/>
+
+     <!-- !
+	This template applies a ReportView to an instance of the ReportViewModel class shown in the main window.
+   	-->
+     <DataTemplate DataType="{x:Type vm:ContentsViewModel}">
+          <vw:ContentsView />
+     </DataTemplate>
+     <DataTemplate DataType="{x:Type vm:ReportViewModel}">
+		<vw:ReportView />
+	</DataTemplate>
+     <DataTemplate DataType="{x:Type vm:ConsoleViewModel}">
+		<vw:ConsoleView />
+	</DataTemplate>
+	<DataTemplate DataType="{x:Type vm:SerialTaskQueueViewModel}">
+		<vw:SerialTaskQueueView />
+	</DataTemplate>
+	<DataTemplate DataType="{x:Type vm:GlobalSchedulerViewModel}">
+		<vw:GlobalSchedulerView />
+	</DataTemplate>
+	<DataTemplate DataType="{x:Type vm:EditTestViewModel}">
+		<vw:EditTestView />
+	</DataTemplate>
+	<DataTemplate DataType="{x:Type vm:AddMultiplePeopleViewModel}">
+		<vw:AddMultiplePeopleView />
+	</DataTemplate>
+	<DataTemplate DataType="{x:Type vm:ViewMultiplePeopleViewModel}">
+		<vw:ViewMultiplePeopleView />
+	</DataTemplate>
+	<DataTemplate DataType="{x:Type vm:AddPersonViewModel}">
+		<vw:AddPersonView />
+	</DataTemplate>
+	<DataTemplate DataType="{x:Type vm:SearchPersonViewModel}">
+		<vw:SearchPersonView />
+	</DataTemplate>
+	<DataTemplate DataType="{x:Type vm:VehicleEntriesViewModel}">
+		<vw:VehicleEntryView />
+	</DataTemplate>
+	<DataTemplate DataType="{x:Type vm:AccessEntriesViewModel}">
+		<vw:AccessEntriesView />
+	</DataTemplate>
+	<DataTemplate DataType="{x:Type vm:DBLoadStatusViewModel}">
+		<vw:DBLoadStatusView />
+	</DataTemplate>
+     <DataTemplate DataType="{x:Type vm:RollCallViewModel}">
+          <vw:RollCallView />
+     </DataTemplate>
+     <DataTemplate DataType="{x:Type vm:OrientationsLiveViewModel}">
+          <vw:OrientationLiveView />
+     </DataTemplate>
+     <DataTemplate DataType="{x:Type vm:ShiftEntriesViewModel}">
+          <vw:ShiftEntriesView />
+     </DataTemplate>
+     <DataTemplate DataType="{x:Type vm:PhoneViewModel}">
+          <vw:PhoneView />
+     </DataTemplate>
+     <DataTemplate DataType="{x:Type vm:AwayListViewModel}">
+          <vw:AwayListView />
+     </DataTemplate>
+     <DataTemplate DataType="{x:Type vm:StatsViewModel}">
+          <vw:StatsView/>
+     </DataTemplate>
+
+     <DataTemplate DataType="{x:Type vm:SaveStatsViewModel}">
+          <vw:ReportStatsView/>
+     </DataTemplate>
+     <DataTemplate DataType="{x:Type vm:WebBrowserViewModel}">
+          <vw:WebBrowserView/>
+     </DataTemplate>
+     <DataTemplate DataType="{x:Type vm:HelpFileViewModel}">
+          <vw:HelpFileView />
+     </DataTemplate>
+     <BorderGapMaskConverter x:Key="BorderGapMaskConverter"/>
+     <Style TargetType="{x:Type GroupBox}">
+          <Setter Property="BorderBrush" Value="#AAAAAA"/>
+          <Setter Property="BorderThickness" Value="1"/>
+          <Setter Property="Template">
+               <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type GroupBox}">
+                         <Grid SnapsToDevicePixels="true">
+                              <Grid.ColumnDefinitions>
+                                   <ColumnDefinition Width="6"/>
+                                   <ColumnDefinition Width="Auto"/>
+                                   <ColumnDefinition Width="*"/>
+                                   <ColumnDefinition Width="6"/>
+                              </Grid.ColumnDefinitions>
+                              <Grid.RowDefinitions>
+                                   <RowDefinition Height="Auto"/>
+                                   <RowDefinition Height="Auto"/>
+                                   <RowDefinition Height="*"/>
+                                   <RowDefinition Height="6"/>
+                              </Grid.RowDefinitions>
+                              <Border BorderBrush="Transparent" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Grid.ColumnSpan="4" Grid.Column="0" CornerRadius="4" Grid.Row="1" Grid.RowSpan="3"/>
+                              <Border BorderBrush="Transparent" BorderThickness="{TemplateBinding BorderThickness}" Grid.ColumnSpan="4" CornerRadius="4" Grid.Row="1" Grid.RowSpan="3">
+                                   <Border.OpacityMask>
+                                        <MultiBinding ConverterParameter="7" Converter="{StaticResource BorderGapMaskConverter}">
+                                             <Binding ElementName="Header" Path="ActualWidth"/>
+                                             <Binding Path="ActualWidth" RelativeSource="{RelativeSource Self}"/>
+                                             <Binding Path="ActualHeight" RelativeSource="{RelativeSource Self}"/>
+                                        </MultiBinding>
+                                   </Border.OpacityMask>
+                                   <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="3">
+                                        <Border BorderBrush="Transparent" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="2"/>
+                                   </Border>
+                              </Border>
+                              <Border x:Name="Header" Grid.Column="1" Padding="3,1,3,0" Grid.Row="0" Grid.RowSpan="2" TextBlock.FontWeight="SemiBold" >
+                                   <ContentPresenter ContentSource="Header" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                              </Border>
+                              <ContentPresenter Grid.ColumnSpan="2" Grid.Column="1" Margin="{TemplateBinding Padding}" Grid.Row="2" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                         </Grid>
+                    </ControlTemplate>
+               </Setter.Value>
+          </Setter>
+     </Style>
+
+</ResourceDictionary>
