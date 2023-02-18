@@ -1,7 +1,7 @@
 # ReportApp - Security Visitor Management / Reporting Software
 Source for my previous major project.  Designed in collaboration with several users that use it on a continuous basis.  
 
-Designed for visitor management at an anonymous  site I worked for.  
+Designed for visitor management and reporting at a site I worked for.  
 
 Infographics created for users:
 
