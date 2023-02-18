@@ -12,3 +12,4 @@ Infographics created for users:
 ![image](https://user-images.githubusercontent.com/6323654/219828999-2b3ee16b-acdd-4a25-b52a-14f4289d21ac.png)
 ![image](https://user-images.githubusercontent.com/6323654/219829005-dad0ae0b-353d-46cc-9779-6688f4545630.png)
 
+Note that this project will not run properly if run outside its intended environment, as it relies on a web connection to a S2 Netbox server.
