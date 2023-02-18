@@ -1,5 +1,5 @@
 # ReportApp - Visitor Managment / Reporting Software
-Source for my previous major project.  Designed in collaboration with several people that use it.  
+Source for my previous major project.  Designed in collaboration with several users that use it on a continuous basis.  
 
 Designed for visitor management at an anonymous  site I worked for.  
 
